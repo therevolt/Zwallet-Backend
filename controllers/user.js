@@ -17,6 +17,8 @@ const {
   decodeTokenRefresh,
 } = require("../helpers/jwtHelper");
 const sendMail = require("../middleware/mailer");
+const getPagination = require("../helpers/getPagination");
+const getPagingData = require("../helpers/getPagingData");
 const User = db.user;
 const Wallet = db.wallet;
 
@@ -353,21 +355,26 @@ exports.getListUsers = (req, res) => {
   const verify = verifyToken(req);
   const dataUserHaveWallet = [];
   if (verify !== true) return formatResult(res, 400, false, verify, null);
-  const decode = decodeToken(req);
-  const userId = decode.userId;
-  User.findAll()
+  const { page, size } = req.query;
+  const { limit, offset } = getPagination(page, size);
+  User.findAndCountAll({
+    limit: parseInt(limit),
+    offset: parseInt(offset),
+  })
     .then(async (result) => {
-      if (result.length > 0) {
-        for (let i in result) {
-          if (result[i].userId !== userId) {
-            await Wallet.findOne({ where: { userId: result[i].userId } })
+      console.log(result.rows.length);
+      if (result.rows.length > 0) {
+        const newResult = getPagingData(result, page, limit);
+        if (newResult.wallets.length > 0) {
+          for (let i = 0; i < newResult.wallets.length; i++) {
+            await Wallet.findOne({ where: { userId: newResult.wallets[i].userId } })
               .then((resultCheck) => {
                 if (resultCheck) {
                   dataUserHaveWallet.push({
-                    userId: result[i].userId,
-                    avatar: result[i].avatar,
-                    fullName: `${result[i].firstName} ${result[i].lastName}`,
-                    phone: result[i].phone,
+                    userId: newResult.wallets[i].userId,
+                    avatar: newResult.wallets[i].avatar,
+                    fullName: `${newResult.wallets[i].firstName} ${newResult.wallets[i].lastName}`,
+                    phone: newResult.wallets[i].phone,
                   });
                 }
               })
@@ -375,11 +382,15 @@ exports.getListUsers = (req, res) => {
                 formatResult(res, 500, false, errs, null);
               });
           }
+          newResult.wallets = dataUserHaveWallet;
+          formatResult(res, 200, true, "Success", newResult);
         }
-        formatResult(res, 200, true, "Success", dataUserHaveWallet);
+      } else {
+        formatResult(res, 404, false, "Wallets Not Found", null);
       }
     })
     .catch((err) => {
+      console.log(err);
       formatResult(res, 500, false, err, null);
     });
 };
