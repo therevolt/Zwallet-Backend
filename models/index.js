@@ -14,5 +14,6 @@ db.sequelize = sequelize;
 db.user = require("./user")(sequelize, Sequelize);
 db.wallet = require("./wallet")(sequelize, Sequelize);
 db.transaction = require("./transaction")(sequelize, Sequelize);
+db.otp = require("./otp")(sequelize, Sequelize);
 
 module.exports = db;

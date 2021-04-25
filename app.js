@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 
 //Models
 const db = require("./models");
@@ -8,8 +9,13 @@ const db = require("./models");
 const Routes = require("./routes");
 const app = express();
 
-app.use(cors());
+const optionCors = {
+  origin: "http://localhost:3000",
+  credentials: true,
+};
 
+app.use(cors(optionCors));
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/avatar", express.static("./upload"));

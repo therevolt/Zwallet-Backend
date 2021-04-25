@@ -15,7 +15,7 @@ exports.createTrx = (req, res) => {
   User.findOne({ where: { userId: req.body.receiver } })
     .then((result) => {
       if (result) {
-        User.findOne({ where: { userId } }).then((resultUserSender) => {
+        User.findOne({ where: { userId } }).then(async (resultUserSender) => {
           if (resultUserSender) {
             if (!resultUserSender.secretPin)
               return formatResult(res, 400, false, "Set PIN Before Transaction", null);
@@ -23,26 +23,24 @@ exports.createTrx = (req, res) => {
             if (comparePin) {
               req.body.receiver = result.userId;
               req.body.sender = userId;
-              Wallet.findOne({ where: { userId } }).then((resultWallet) => {
-                if (resultWallet) {
-                  if (resultWallet.balance > parseInt(req.body.amount)) {
-                    req.body.balanceLeft = resultWallet.balance - parseInt(req.body.amount);
+              const resultWalletReceiver = await Wallet.findOne({
+                where: { userId: result.userId },
+              });
+              Wallet.findOne({ where: { userId } }).then((resultWalletSender) => {
+                if (resultWalletSender) {
+                  if (resultWalletSender.balance > parseInt(req.body.amount)) {
+                    req.body.balanceSenderLeft =
+                      resultWalletSender.balance - parseInt(req.body.amount);
+                    req.body.balanceReceiverLeft =
+                      resultWalletReceiver.balance + parseInt(req.body.amount);
                     req.body.status = "Success";
                     Trx.create(req.body).then((resultTrx) => {
-                      Wallet.findOne({ where: { userId: req.body.receiver } }).then(
-                        (resultSearchWallet) => {
-                          if (resultSearchWallet) {
-                            Wallet.update({ balance: req.body.balanceLeft }, { where: { userId } });
-                            Wallet.update(
-                              { balance: resultSearchWallet.balance + parseInt(req.body.amount) },
-                              { where: { userId: resultSearchWallet.userId } }
-                            );
-                            formatResult(res, 201, true, "Success", resultTrx);
-                          } else {
-                            formatResult(res, 404, false, "Receiver Not Have Wallet");
-                          }
-                        }
+                      Wallet.update({ balance: req.body.balanceSenderLeft }, { where: { userId } });
+                      Wallet.update(
+                        { balance: req.body.balanceReceiverLeft },
+                        { where: { userId: result.userId } }
                       );
+                      formatResult(res, 201, true, "Success", resultTrx);
                     });
                   } else {
                     formatResult(res, 400, false, "Insufficient Balance", null);
@@ -128,9 +126,12 @@ exports.getTrx = (req, res) => {
           if (resultUser) {
             formatResult(res, 200, true, "Success", {
               amount: result.amount,
-              balanceLeft: result.balanceLeft,
+              balanceSenderLeft: result.balanceSenderLeft,
+              balanceReceiverLeft: result.balanceReceiverLeft,
               date: result.createdAt,
               notes: result.notes,
+              senderId: result.sender,
+              receiverId: result.receiver,
               receiverName: `${resultUser.firstName} ${resultUser.lastName}`,
               phoneReceiver: resultUser.phone,
               avatarReceiver: resultUser.avatar,
@@ -143,5 +144,63 @@ exports.getTrx = (req, res) => {
     })
     .catch(() => {
       formatResult(res, 400, false, "Transaction Not Found", null);
+    });
+};
+
+exports.getListTrx = (req, res) => {
+  Trx.findAll().then((result) => {
+    if (result.length > 0) {
+      formatResult(
+        res,
+        200,
+        true,
+        "Success",
+        result.map((item) => item.id)
+      );
+    } else {
+      formatResult(res, 400, false, "Transaction Not Found", null);
+    }
+  });
+};
+
+exports.getDailyNotif = (req, res) => {
+  const verify = verifyToken(req);
+  if (verify !== true) return formatResult(res, 400, false, verify, null);
+  const decode = decodeToken(req);
+  const userId = decode.userId;
+  let curr = new Date();
+  let first = curr.getDate() - curr.getDay();
+  Trx.findAll({
+    where: {
+      receiver: userId,
+      createdAt: {
+        [Op.between]: [
+          new Date(`${curr.getFullYear()}-${curr.getMonth() + 1}-${first} 07:00:00`),
+          new Date(),
+        ],
+      },
+    },
+  })
+    .then(async (result) => {
+      if (result.length > 0) {
+        const newResult = [];
+        for (let i in result) {
+          let user = await User.findOne({ where: { userId: result[i].sender } });
+          user = await user.username;
+          const json = {
+            sender: user,
+            amount: result[i].amount,
+            status: result[i].status,
+            notes: result[i].notes,
+          };
+          newResult.push(json);
+        }
+        formatResult(res, 200, true, "Success", newResult);
+      } else {
+        formatResult(res, 404, false, "You Don't Have Notifications Today");
+      }
+    })
+    .catch((err) => {
+      formatResult(res, 400, false, err, null);
     });
 };

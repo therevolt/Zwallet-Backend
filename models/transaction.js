@@ -9,7 +9,10 @@ module.exports = (sequelize, Sequelize) => {
     amount: {
       type: Sequelize.INTEGER,
     },
-    balanceLeft: {
+    balanceSenderLeft: {
+      type: Sequelize.INTEGER,
+    },
+    balanceReceiverLeft: {
       type: Sequelize.INTEGER,
     },
     notes: {

@@ -12,7 +12,10 @@ module.exports = {
   },
   decodeToken: (req) => {
     try {
-      const decode = jwt.verify(req.headers["authorization"].split(" ")[1], process.env.SECRET_KEY);
+      const token = req.headers.cookie
+        ? req.headers.cookie.split("=")[1]
+        : req.headers["authorization"].split(" ")[1];
+      const decode = jwt.verify(token, process.env.SECRET_KEY);
       return decode;
     } catch (error) {
       return new Error(error).message;
@@ -20,7 +23,10 @@ module.exports = {
   },
   verifyToken: (req) => {
     try {
-      jwt.verify(req.headers["authorization"].split(" ")[1], process.env.SECRET_KEY);
+      const token = req.headers.cookie
+        ? req.headers.cookie.split("=")[1]
+        : req.headers["authorization"].split(" ")[1];
+      jwt.verify(token, process.env.SECRET_KEY);
       return true;
     } catch (error) {
       return new Error(error).message;
@@ -36,10 +42,10 @@ module.exports = {
   },
   decodeTokenRefresh: (req) => {
     try {
-      const decode = jwt.verify(
-        req.headers["authorization"].split(" ")[1],
-        process.env.SECRET_KEY_REFRESH
-      );
+      const token = req.headers.cookie
+        ? req.headers.cookie.split("=")[1]
+        : req.headers["authorization"].split(" ")[1];
+      const decode = jwt.verify(token, process.env.SECRET_KEY_REFRESH);
       return decode;
     } catch (error) {
       return new Error(error).message;
@@ -47,7 +53,10 @@ module.exports = {
   },
   verifyTokenRefresh: (req) => {
     try {
-      jwt.verify(req.headers["authorization"].split(" ")[1], process.env.SECRET_KEY_REFRESH);
+      const token = req.headers.cookie
+        ? req.headers.cookie.split("=")[1]
+        : req.headers["authorization"].split(" ")[1];
+      jwt.verify(token, process.env.SECRET_KEY_REFRESH);
       return true;
     } catch (error) {
       return new Error(error).message;
@@ -63,10 +72,10 @@ module.exports = {
   },
   decodeTokenReset: (req) => {
     try {
-      const decode = jwt.verify(
-        req.headers["authorization"].split(" ")[1],
-        process.env.SECRET_KEY_RESET
-      );
+      const token = req.headers.cookie
+        ? req.headers.cookie.split("=")[1]
+        : req.headers["authorization"].split(" ")[1];
+      const decode = jwt.verify(token, process.env.SECRET_KEY_RESET);
       return decode;
     } catch (error) {
       return new Error(error).message;
@@ -74,7 +83,10 @@ module.exports = {
   },
   verifyTokenReset: (req) => {
     try {
-      jwt.verify(req.headers["authorization"].split(" ")[1], process.env.SECRET_KEY_RESET);
+      const token = req.headers.cookie
+        ? req.headers.cookie.split("=")[1]
+        : req.headers["authorization"].split(" ")[1];
+      jwt.verify(token, process.env.SECRET_KEY_RESET);
       return true;
     } catch (error) {
       return new Error(error).message;
@@ -90,10 +102,10 @@ module.exports = {
   },
   decodeTokenVerify: (req) => {
     try {
-      const decode = jwt.verify(
-        req.headers["authorization"].split(" ")[1],
-        process.env.SECRET_KEY_VERIF
-      );
+      const token = req.headers.cookie
+        ? req.headers.cookie.split("=")[1]
+        : req.headers["authorization"].split(" ")[1];
+      const decode = jwt.verify(token, process.env.SECRET_KEY_VERIF);
       return decode;
     } catch (error) {
       return new Error(error).message;
@@ -101,7 +113,10 @@ module.exports = {
   },
   verifyTokenVerify: (req) => {
     try {
-      jwt.verify(req.headers["authorization"].split(" ")[1], process.env.SECRET_KEY_VERIF);
+      const token = req.headers.cookie
+        ? req.headers.cookie.split("=")[1]
+        : req.headers["authorization"].split(" ")[1];
+      jwt.verify(token, process.env.SECRET_KEY_VERIF);
       return true;
     } catch (error) {
       return new Error(error).message;

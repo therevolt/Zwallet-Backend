@@ -19,6 +19,8 @@ const {
 const sendMail = require("../middleware/mailer");
 const getPagination = require("../helpers/getPagination");
 const getPagingData = require("../helpers/getPagingData");
+const cookie = require("cookie");
+const { Op } = require("sequelize");
 const User = db.user;
 const Wallet = db.wallet;
 
@@ -137,6 +139,16 @@ exports.login = async (req, res) => {
         delete checkEmail.secretPin;
         const token = getToken(checkEmail);
         const refreshToken = getTokenRefresh(checkEmail);
+        res.setHeader(
+          "Set-Cookie",
+          cookie.serialize("token", token, {
+            httpOnly: true,
+            maxAge: 60 * 60,
+            secure: false,
+            path: "/",
+            sameSite: "strict",
+          })
+        );
         formatResult(res, 200, true, "Login Success", { ...checkEmail, token, refreshToken });
       } else {
         formatResult(res, 400, false, "Password Incorrect", null);
@@ -355,9 +367,12 @@ exports.getListUsers = (req, res) => {
   const verify = verifyToken(req);
   const dataUserHaveWallet = [];
   if (verify !== true) return formatResult(res, 400, false, verify, null);
+  const decode = decodeToken(req);
+  const userId = decode.userId;
   const { page, size } = req.query;
   const { limit, offset } = getPagination(page, size);
   User.findAndCountAll({
+    where: { [Op.not]: { userId } },
     limit: parseInt(limit),
     offset: parseInt(offset),
   })
