@@ -377,7 +377,6 @@ exports.getListUsers = (req, res) => {
     offset: parseInt(offset),
   })
     .then(async (result) => {
-      console.log(result.rows.length);
       if (result.rows.length > 0) {
         const newResult = getPagingData(result, page, limit);
         if (newResult.wallets.length > 0) {
