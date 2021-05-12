@@ -122,8 +122,9 @@ exports.getTrx = (req, res) => {
   Trx.findOne({ where: { id: req.params.id } })
     .then((result) => {
       if (result) {
-        User.findOne({ where: { userId: result.receiver } }).then((resultUser) => {
+        User.findOne({ where: { userId: result.receiver } }).then(async (resultUser) => {
           if (resultUser) {
+            const dataSender = await User.findOne({ where: { userId: result.sender } });
             formatResult(res, 200, true, "Success", {
               amount: result.amount,
               balanceSenderLeft: result.balanceSenderLeft,
@@ -131,6 +132,9 @@ exports.getTrx = (req, res) => {
               date: result.createdAt,
               notes: result.notes,
               senderId: result.sender,
+              senderName: `${dataSender.firstName} ${dataSender.lastName}`,
+              phoneSender: dataSender.phone,
+              avatarSender: dataSender.avatar,
               receiverId: result.receiver,
               receiverName: `${resultUser.firstName} ${resultUser.lastName}`,
               phoneReceiver: resultUser.phone,
