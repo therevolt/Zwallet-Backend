@@ -280,7 +280,7 @@ exports.resetPassword = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   const id = req.params.id;
-  const deleted = await User.destroy({ where: { id } });
+  const deleted = await User.destroy({ where: { userId: id } });
   if (deleted === 1) {
     formatResult(res, 200, true, "Success Deleted", null);
   } else {
@@ -389,6 +389,7 @@ exports.getListUsers = (req, res) => {
                     avatar: newResult.wallets[i].avatar,
                     fullName: `${newResult.wallets[i].firstName} ${newResult.wallets[i].lastName}`,
                     phone: newResult.wallets[i].phone,
+                    disable: newResult.wallets[i].disable,
                   });
                 }
               })
@@ -484,6 +485,48 @@ exports.changePin = (req, res) => {
       }
     })
     .catch((err) => {
+      formatResult(res, 500, false, err, null);
+    });
+};
+
+exports.disableAccount = (req, res) => {
+  const verify = verifyToken(req);
+  if (verify !== true) return formatResult(res, 400, false, verify, null);
+  User.findOne({ where: { userId: req.params.id } })
+    .then(async (result) => {
+      if (result) {
+        User.update({ disable: true }, { where: { userId: result.userId } })
+          .then(() => {
+            formatResult(res, 200, true, "Success Disable Account", null);
+          })
+          .catch((err) => {
+            formatResult(res, 400, false, err, null);
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      formatResult(res, 500, false, err, null);
+    });
+};
+
+exports.enableAccount = (req, res) => {
+  const verify = verifyToken(req);
+  if (verify !== true) return formatResult(res, 400, false, verify, null);
+  User.findOne({ where: { userId: req.params.id } })
+    .then(async (result) => {
+      if (result) {
+        User.update({ disable: false }, { where: { userId: result.userId } })
+          .then(() => {
+            formatResult(res, 200, true, "Success Disable Account", null);
+          })
+          .catch((err) => {
+            formatResult(res, 400, false, err, null);
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
       formatResult(res, 500, false, err, null);
     });
 };

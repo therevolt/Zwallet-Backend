@@ -17,6 +17,14 @@ exports.createTrx = (req, res) => {
       if (result) {
         User.findOne({ where: { userId } }).then(async (resultUserSender) => {
           if (resultUserSender) {
+            if (resultUserSender.disable)
+              return formatResult(
+                res,
+                500,
+                false,
+                "Your Account Has Been Disable, Please Contact Customer Service",
+                null
+              );
             if (!resultUserSender.secretPin)
               return formatResult(res, 400, false, "Set PIN Before Transaction", null);
             const comparePin = bcrypt.compareSync(req.body.pin, resultUserSender.secretPin);

@@ -21,5 +21,7 @@ router.get("/lists", Auth, user.getListUsers);
 router.get("/details", Auth, user.getDetailsPerson);
 router.post("/compare", Auth, user.matchPin);
 router.post("/change/pin", Auth, user.changePin);
+router.put("/disable/:id", AuthAdmin, user.disableAccount);
+router.put("/enable/:id", AuthAdmin, user.enableAccount);
 
 module.exports = router;
