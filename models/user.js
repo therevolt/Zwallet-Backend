@@ -48,7 +48,8 @@ module.exports = (sequelize, Sequelize) => {
     },
     avatar: {
       type: Sequelize.STRING,
-      defaultValue: "https://images.pexels.com/photos/371160/pexels-photo-371160.jpeg",
+      defaultValue:
+        "https://image.freepik.com/free-vector/modern-people-avatar-casual-clothes-vector-cartoon-illustration-man-with-individual-face-hair-light-digital-frame-dark-blue-computer-picture-web-profile_107791-4258.jpg",
     },
     active: {
       type: Sequelize.BOOLEAN,

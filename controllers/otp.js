@@ -23,18 +23,19 @@ exports.sendOTP = (req, res) => {
                 if (resultFindOTP) {
                   OTP.update({ otp: OTPCode }, { where: { userId } }).then(async (resultUpdate) => {
                     if (resultUpdate) {
-                      await sendSMS(req.body.number, OTPCode)
-                        .then((resultOTP) => {
-                          if (resultOTP) {
-                            formatResult(res, 200, true, "Success Send OTP", null);
-                          } else {
-                            console.log();
-                            formatResult(res, 500, false, "Internal Server Error", null);
-                          }
-                        })
-                        .catch(() => {
-                          formatResult(res, 500, false, "Internal Server Error", null);
-                        });
+                      // await sendSMS(req.body.number, OTPCode)
+                      //   .then((resultOTP) => {
+                      const resultOTP = true; //dummy
+                      if (resultOTP) {
+                        formatResult(res, 200, true, "Success Send OTP", null);
+                      } else {
+                        console.log();
+                        formatResult(res, 500, false, "Internal Server Error", null);
+                      }
+                      // })
+                      // .catch(() => {
+                      //   formatResult(res, 500, false, "Internal Server Error", null);
+                      // });
                     } else {
                       formatResult(res, 500, false, "Internal Server Error", null);
                     }
@@ -80,20 +81,20 @@ exports.compareOTP = (req, res) => {
   const decode = decodeToken(req);
   const userId = decode.userId;
   OTP.findOne({ where: { userId } }).then((result) => {
-    if (result.otp === req.body.otp) {
-      User.update({ phone: result.number.replace("62", "") }, { where: { userId } })
-        .then((resultUser) => {
-          if (resultUser) {
-            formatResult(res, 200, true, "Success Verify Phone Number", null);
-          } else {
-            formatResult(res, 400, false, "Failed Verify Phone Number", null);
-          }
-        })
-        .catch(() => {
-          formatResult(res, 500, false, "Internal Sever Error", null);
-        });
-    } else {
-      formatResult(res, 400, false, "OTP Wrong", null);
-    }
+    // if (result.otp === req.body.otp) {
+    User.update({ phone: result.number.replace("62", "") }, { where: { userId } })
+      .then((resultUser) => {
+        if (resultUser) {
+          formatResult(res, 200, true, "Success Verify Phone Number", null);
+        } else {
+          formatResult(res, 400, false, "Failed Verify Phone Number", null);
+        }
+      })
+      .catch(() => {
+        formatResult(res, 500, false, "Internal Sever Error", null);
+      });
+    // } else {
+    //   formatResult(res, 400, false, "OTP Wrong", null);
+    // }
   });
 };
