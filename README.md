@@ -3,8 +3,6 @@
  <img width=400px src="https://i.ibb.co/KxRM9rJ/Blue-Bold-Marketing-Letter-M-Logo-1.png" alt="logo"></a>
 </p>
 
-<h3 align="center">Backend Tickitz - Arkademy</h3>
-
 
 ## 🧐 About
 Backend Project Zwallet Apps
