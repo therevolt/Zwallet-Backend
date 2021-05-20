@@ -1,15 +1,15 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width=400px height=300px src="https://i.ibb.co/PWw6SGx/image-2021-04-19-075223.png" alt="logo"></a>
+ <img width=400px src="https://i.ibb.co/KxRM9rJ/Blue-Bold-Marketing-Letter-M-Logo-1.png" alt="logo"></a>
 </p>
 
 <h3 align="center">Backend Tickitz - Arkademy</h3>
 
 
-># About
+## 🧐 About
 Backend Project Zwallet Apps
 
-># Endpoint Details
+## Endpoint Details
 | Endpoint      | Method           | Info |
 | ------------- |:-------------:|:---|
 | /v1/users  | `POST` `GET` `PUT` `DELETE` | User |
@@ -18,7 +18,7 @@ Backend Project Zwallet Apps
 
 <br>
 
-># Build With
+## 🔖Build With
 
 * Node Js
 * Express JS
@@ -28,7 +28,7 @@ Backend Project Zwallet Apps
 
 <br>
 
-># How To Use ?
+## 💻 How To Install?
 ### Clone This Repo
 ```
 git clone https://github.com/therevolt/Zwallet-Backend.git
@@ -48,11 +48,11 @@ npm run dev
 node app.js
 ```
 
-># Documentation
-### Postman : https://documenter.getpostman.com/view/10780576/TzJsfdrQ
+## Documentation
+Postman : https://documenter.getpostman.com/view/10780576/TzJsfdrQ
 
-># FrontEnd Repo
-### Github : https://github.com/therevolt/Zwallet-Frontend
+## FrontEnd
+Github : https://github.com/therevolt/Zwallet-Frontend
 
-># Live Demo
+## 💻 Live Demo
 [Netlify](https://zwallet-new.vercel.app/)
