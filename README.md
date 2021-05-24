@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width=400px src="https://i.ibb.co/KxRM9rJ/Blue-Bold-Marketing-Letter-M-Logo-1.png" alt="logo"></a>
+ <img width=200px src="https://i.ibb.co/KxRM9rJ/Blue-Bold-Marketing-Letter-M-Logo-1.png" alt="logo"></a>
 </p>
 
 
